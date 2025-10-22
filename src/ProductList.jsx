@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './ProductList.css'
 import CartItem from './CartItem';
 import { useDispatch, useSelector } from 'react-redux';
-import { addItem, removeItem, updateQuantity } from './CartSlice';
+import { addItem } from './CartSlice';
 
 function ProductList({ onHomeClick }) {
     const [showCart, setShowCart] = useState(false);
@@ -233,7 +233,7 @@ function ProductList({ onHomeClick }) {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        width: '1100px',
+        width: '1010px', // 1100px 
     }
     const styleA = {
         color: 'white',
@@ -261,8 +261,15 @@ function ProductList({ onHomeClick }) {
         setShowCart(false);
     };
 
+    const handleDeleteItem = (item) => {
+        setAddedToCart((prevState) => ({ 
+            ...prevState, 
+            [item.name]: false, 
+        }));
+    }
+
     const handleAddToCart = (plant) => {
-        if(addedToCart[plant.name] !== undefined)
+        if(addedToCart[plant.name] !== undefined && addedToCart[plant.name] == true)
             return;
 
         dispatch(addItem(plant)); // Dispatch the action to add the product/plant to the cart (Redux action) 
@@ -316,10 +323,10 @@ function ProductList({ onHomeClick }) {
                             <div className="product-description">{plant.description}</div> {/* Display plant description */}
                             <div className="product-cost">{plant.cost}</div> {/* Display plant cost */}
                             <button
-                                className={addedToCart[plant.name] !== undefined ?  "product-button added-to-cart" : "product-button"}
+                                className={addedToCart[plant.name] !== undefined && addedToCart[plant.name] == true ?  "product-button added-to-cart" : "product-button"}
                                 onClick={() => handleAddToCart(plant)} // Handle adding plant to cart
                             >
-                            {addedToCart[plant.name] !== undefined ? 'Added' : 'Add' } to Cart
+                            {addedToCart[plant.name] !== undefined && addedToCart[plant.name] == true ? 'Added' : 'Add' } to Cart
                             </button>
                             </div>
                         ))}
@@ -328,7 +335,7 @@ function ProductList({ onHomeClick }) {
                     ))}
                 </div>
             ) : (
-                <CartItem onContinueShopping={handleContinueShopping} />
+                <CartItem onContinueShopping={handleContinueShopping} onDeleteItem={handleDeleteItem} />
             )}
         </div>
     );
